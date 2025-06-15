@@ -1,6 +1,7 @@
 # CHARM-Vis
 
-<img width="785" alt="image" src="https://github.com/user-attachments/assets/68c1f3ce-2813-4504-87a2-c2703a58d916" />
+<img width="973" alt="image" src="https://github.com/user-attachments/assets/e24016db-167e-4fcb-a1e8-0964b9723941" />
+
 
 ## Description and instructions
 
