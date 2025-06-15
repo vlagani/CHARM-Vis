@@ -1,0 +1,49 @@
+# loading / installing libraries
+if(!require(pak)){
+  install.packages('pak')
+  library(pak)
+}
+if(!require(Seurat)){
+  pak('Seurat')
+  library(Seurat)
+}
+if(!require(tidyverse)){
+  pak('tidyverse')
+  library(tidyverse)
+}
+if(!require(ggrepel)){
+  pak('ggrepel')
+  library(ggrepel)
+}
+if(!require(openxlsx)){
+  pak('openxlsx')
+  library(openxlsx)
+}
+if(!require(rtracklayer)){
+  pak('rtracklayer')
+  library(rtracklayer)
+}
+if(!require(future)){
+  pak('future')
+  library(future)
+}
+if(!require(clusterProfiler)){
+  pak('clusterProfiler')
+  library(clusterProfiler)
+}
+if(!require(enrichplot)){
+  pak('enrichplot')
+  library(enrichplot)
+}
+if(!require(org.Mm.eg.db)){
+  pak('org.Mm.eg.db')
+  library(org.Mm.eg.db)
+}
+if(!require(doFuture)){
+  pak('doFuture')
+  library(doFuture)
+}
+if(!require(foreach)){
+  pak('foreach')
+  library(foreach)
+}
