@@ -43,7 +43,23 @@ if(!require(doFuture)){
   pak('doFuture')
   library(doFuture)
 }
-if(!require(foreach)){
-  pak('foreach')
-  library(foreach)
+if(!require(dittoSeq)){
+  pak('dittoSeq')
+  library(dittoSeq)
+}
+if(!require(SummarizedExperiment)){
+  pak('SummarizedExperiment')
+  library(SummarizedExperiment)
+}
+if(!require(ComplexHeatmap)){
+  pak('ComplexHeatmap')
+  library(ComplexHeatmap)
+}
+if(!require(circlize)){
+  pak('circlize')
+  library(circlize)
+}
+if(!require(simplifyEnrichment)){
+  pak('simplifyEnrichment')
+  library(simplifyEnrichment)
 }

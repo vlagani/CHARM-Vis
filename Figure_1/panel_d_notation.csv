@@ -1,0 +1,37 @@
+﻿Cluster,Cell_type,Color,Notation
+6,Astrocytes,#00BF7C,
+11,Astrocytes,#00BF7C,
+23,Astrocytes,#00BF7C,LRGUK-NEK10
+14,Gabaergic neurons,#A3A400,
+15,Gabaergic neurons,#A3A400,VIPR2
+19,Gabaergic neurons,#A3A400,
+22,Gabaergic neurons,#A3A400,MEIS2 
+26,Gabaergic neurons,#A3A400,
+27,Gabaergic neurons,#A3A400,
+28,Gabaergic neurons,#A3A400,CHODL
+29,Gabaergic neurons,#A3A400,LAMP5
+31,Gabaergic neurons,#A3A400,
+34,Gabaergic neurons,#A3A400,
+0,Glutamatergic neurons,#F8766C,L4/5 IT CTX
+1,Glutamatergic neurons,#F8766C,L4/5 IT CTX
+2,Glutamatergic neurons,#F8766C,L6 CT CTX
+3,Glutamatergic neurons,#F8766C,Car3
+4,Glutamatergic neurons,#F8766C,
+5,Glutamatergic neurons,#F8766C,L6b CTX 
+7,Glutamatergic neurons,#F8766C,
+8,Glutamatergic neurons,#F8766C,
+9,Glutamatergic neurons,#F8766C,
+10,Glutamatergic neurons,#F8766C,
+12,Glutamatergic neurons,#F8766C,
+13,Glutamatergic neurons,#F8766C,
+16,Glutamatergic neurons,#F8766C,
+17,Glutamatergic neurons,#F8766C,L6 IT CTX
+18,Glutamatergic neurons,#F8766C,
+21,Glutamatergic neurons,#F8766C,
+24,Glutamatergic neurons,#F8766C,
+30,Glutamatergic neurons,#F8766C,
+33,Glutamatergic neurons,#F8766C,L5 PT CTX
+20,Oligodendrocytes,#00AFF5,
+25,Oligodendrocytes,#00AFF5,
+32,Other,#E76BF2,
+35,Other,#E76BF2,
