@@ -5,7 +5,7 @@
 
 ## Description and instructions
 
-This repositor contains code for reproducing results presented in the manuscript: *Charting the single cell transcriptional landscape governing visual imprinting*, available at XXX.
+This repositor contains code for reproducing results presented in the manuscript: *Charting the single cell transcriptional landscape governing visual imprinting*, available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2025.06.23.660422v1).
 
 In order to replicate our results, please follow these instructions:
 
