@@ -23,6 +23,10 @@ if(!require(rtracklayer)){
   pak('rtracklayer')
   library(rtracklayer)
 }
+if(!require(DESeq2)){
+  pak('DESeq2')
+  library(DESeq2)
+}
 if(!require(future)){
   pak('future')
   library(future)
