@@ -5,7 +5,7 @@
 
 ## Description and instructions
 
-This repositor contains code for reproducing results presented in the manuscript: *Charting the single cell transcriptional landscape governing visual imprinting*, available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2025.06.23.660422v1).
+This repository contains code for reproducing results presented in the manuscript: *Charting the single cell transcriptional landscape governing visual imprinting*, available on [bioRxiv](https://www.biorxiv.org/content/10.1101/2025.06.23.660422v1).
 
 In order to replicate our results, please follow these instructions:
 
@@ -14,4 +14,4 @@ In order to replicate our results, please follow these instructions:
 3. Run the 1_differential_analysis.R and 2_enrichment_analysis.R scripts
 4. Run any of the scripts in the Figure_1, Figure_2, or Figure_3 folders
 
-Please note that you will need both a working R installation and several R packages for running the code. Instructions on how to install R can be found [here](https://www.r-project.org/)
+Please note that you will need a working R installation for running the code. Instructions on how to install R can be found [here](https://www.r-project.org/)

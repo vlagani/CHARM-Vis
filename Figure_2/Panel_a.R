@@ -3,28 +3,15 @@
 
 # memory and library
 rm(list = ls())
-source('../libraries.R')
+source('../ancillary/libraries.R')
 
 # control panel 
 data_file <- '../data/combined_sets.rds'
 res_folder <- './Panel_a'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
-universe <- list(Oligodendrocytes = c(20, 25),
-                 Astrocytes = c(6, 11, 23),
-                 Other = c(32, 35),
-                 `Gabaergic neurons`= c(26, 22, 34, 27, 15, 
-                               28, 14, 31, 19, 29))
-universe$`Glutamatergic neurons` <- setdiff(0:35, unlist(universe))
 
 # loading the combined sets
 combined_sets <- readRDS(data_file)
-
-# creating the cell identity
-combined_sets$`Cell identity` <- ''
-for(i in 1:length(universe)){
-  idx <- combined_sets$seurat_clusters %in% as.character(universe[[i]])
-  combined_sets$`Cell identity`[idx] <- names(universe)[i]
-}
 
 # extracing the meta data
 meta_data <- combined_sets@meta.data
@@ -56,4 +43,3 @@ png(filename = file.path(res_folder, 'umap_good_learners_vs_untrained.png'),
     width = 6000, height = 6300, res = 600)
 plot(p)
 dev.off()
-

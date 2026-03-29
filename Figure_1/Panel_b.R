@@ -3,19 +3,19 @@
 
 # memory and library
 rm(list = ls())
-source('../libraries.R')
+source('../ancillary/libraries.R')
 
 # control panel 
 data_file <- '../data/combined_sets.rds'
 res_folder <- './Panel_b'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
 universe <- list(Oligodendrocytes = c(20, 25),
-                 Astrocytes = c(6, 11, 23),
+                 Astrocytes = c(6, 11),
+                 Ependymal = 23,
                  Other = c(32, 35),
                  `Gabaergic neurons`= c(26, 22, 34, 27, 15, 
-                               28, 14, 31, 19, 29))
+                                        28, 14, 31, 19, 29))
 universe$`Glutamatergic neurons` <- setdiff(0:35, unlist(universe))
-
 
 # loading the combined sets
 combined_sets <- readRDS(data_file)
@@ -36,4 +36,3 @@ png(filename = file.path(res_folder, 'panel_b.png'),
     width = 7500, height = 6600, res = 600)
 plot(p)
 dev.off()
-j

@@ -4,10 +4,10 @@
 
 # memory and libraries
 rm(list = ls())
-source('libraries.R')
+source('./ancillary/libraries.R')
 
 # control panel
-de_folder <- '1_differential_analysis'
+de_folder <- './1_differential_analysis'
 min_num_cells <- 50
 min_num_genes <- 20
 max_num_genes <- 200
@@ -22,15 +22,11 @@ plan("multisession", workers = ncores)
 options(future.globals.maxSize = 20000 * 1024^2)
 
 # how many differential analyses?
-analyses <- c('Gabaergic_neurons', 'Glutamatergic_neurons', 
-              'Astrocytes', 'Oligodendrocytes')
-for(i in 0:35){
-  analyses <- c(analyses, paste0('Cluster_', i))
-}
+analyses <- dir(de_folder)
 n_analyses <- length(analyses)
 
 # loading information for gene translation
-source('gene_conversion_function.R')
+source(file.path('ancillary', 'gene_conversion_function.R'))
 load(file.path('data', 'annot_table_mouse_chicken_2024_02_09.RData'))
 
 #### enrichment analysis ####

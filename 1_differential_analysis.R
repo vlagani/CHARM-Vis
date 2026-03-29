@@ -4,7 +4,7 @@
 
 # memory and libraries
 rm(list = ls())
-source('libraries.R')
+source('./ancillary/libraries.R')
 options(future.globals.maxSize = 2000 * 1024^2)
 
 # control panel
@@ -12,17 +12,24 @@ min_baseMean <- 10
 num_processors <- 8
 num_genes_pca <- 500
 factor_to_investigate <- c('Group', 'Sex')
+classification_file <- './data/cell_classification.csv'
 res_folder <- '1_differential_analysis'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
 
+# loading classification
+classification <- read.csv(classification_file)
+
 # choosing the analysis
-clusters_list <- list(Gabaergic_neurons = c(26, 22, 34, 27, 15, 28, 14, 31, 19, 29),
-                      Glutamatergic_neurons = c(0:5, 7:10, 12, 13, 16:18, 21, 24, 30, 33),
-                      Astrocytes = c(6, 11, 23), Oligodendrocytes = c(20, 25))
-for(i in 0:35){ # each single cluster
-  clusters_list[[paste0('Cluster_', i)]] <- i
+analyses_list <- list(IMM = 0:35)
+for(i in unique(classification$Cell_type)){ # each single cluster
+  idx <- classification$Cell_type == i
+  analyses_list[[paste0('Cell_type-', i)]] <- classification$Cluster[idx]
 }
-analysis_names <- names(clusters_list)
+for(i in unique(classification$Cell_subtype)){ # each single cluster
+  idx <- classification$Cell_subtype == i
+  analyses_list[[paste0('Cell_subtype-', i)]] <- classification$Cluster[idx]
+}
+analysis_names <- names(analyses_list)
 n_analyses <- length(analysis_names)
 
 # creating the parallel environment 
@@ -51,7 +58,7 @@ for(iter in 1:n_analyses){
   
   # specific analysis
   name_analysis <- analysis_names[iter]
-  clusters <- clusters_list[[iter]]
+  clusters <- analyses_list[[iter]]
   
   # creating the results folder
   current_res_folder <- file.path(res_folder, name_analysis)

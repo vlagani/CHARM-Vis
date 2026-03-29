@@ -3,28 +3,31 @@
 
 # memory and library
 rm(list = ls())
-source('../libraries.R')
+source('../ancillary/libraries.R')
 
 # control panel 
 data_file <- '../data/combined_sets.rds'
 res_folder <- 'Panel_c'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
-markers <- list(gabaergic = c('GAD1', 'GAD2', 'SLC32A1', 'SLC6A1'), 
+markers <- list(gabaergic = c('GAD1', 'GAD2', 'SLC32A1'), 
                 glutamatergic = c('ARPP21', 'SV2B', 'SLC17A6', 'SATB2'), 
-                astrocite = c('GLI3', 'SLC39A12', 'AQP4'), 
-                oligodendrocite = c('OLIG2', 'SOX10'))
+                astrocite = c('GLI3', 'AQP4'), 
+                ependymal = c('ENSGALG00010011199'), # 'LRRIQ1'
+                oligodendrocite = c('SOX10', 'PDGFRA'))#c('OLIG2', 'SOX10', 'PDGFRA'))
 
 # main cell types
 cell_types <- list(`Gabaergic neurons` = sort(c(26, 22, 34, 27, 15, 28, 14, 31, 19, 29)), 
-                   Oligodendrocytes = c(20, 25),
-                   Astrocytes = c(6, 11, 23), 
+                   `Oligodendrocytes (PC)` = c(20, 25),
+                   Astrocytes = c(6, 11), 
+                   Ependymal = 23,
                    Other = c(32, 35))
 cell_types$`Glutamatergic neurons` <- setdiff(0:35, unlist(cell_types))
-cell_types_color <- c(Astrocytes = '#00BF7C',
-                      `Gabaergic neurons` = '#A3A400',
-                      `Glutamatergic neurons` = '#F8766C', 
-                      Oligodendrocytes = '#00AFF5',
-                      Other = '#E76BF2')
+cell_types_color <- c(Astrocytes = '#00BA38',
+                      Ependymal = '#01BFC4',
+                      `Gabaergic neurons` = '#B79F00',
+                      `Glutamatergic neurons` = '#F8766D',
+                      `Oligodendrocytes (PC)` = '#619CFF',
+                      Other = '#F564E3')
 
 # loading the combined sets
 combined_sets <- readRDS(data_file)
@@ -73,9 +76,9 @@ dittoSeq::dittoHeatmap(aggregated_sets,
                        genes = c(markers$gabaergic, 
                                  markers$glutamatergic, 
                                  markers$oligodendrocite, 
-                                 markers$astrocite),
+                                 markers$astrocite, 
+                                 markers$ependymal),
                        annot.by = 'Cell_type', 
                        show_colnames = TRUE, 
                        cluster_cols = TRUE)
 dev.off()
-

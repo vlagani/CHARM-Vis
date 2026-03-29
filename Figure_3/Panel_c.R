@@ -1,27 +1,26 @@
-# Script for plotting single pathways
+# Script for Figure 3c
 
-#### set up ####
-
-# memory and libraries
+# set up
 rm(list = ls())
-source('../libraries.R')
+source('../ancillary/libraries.R')
 
 # control panel
-gse_results_file <- '../../../analysis_snRNA-seq/2024_02_24/analysis_cell_bender_last/5.4_enrichment_analysis_mouse/integration_approach_1/Glutamatergic_neurons/Glutamatergic_neurons_gseGO_res.rds'
-go_ids <- c('GO:0007612', 'GO:0008306', 'GO:0007613')
+enr_res_file <- '../2_enrichment_analysis/Cell_type-Glutamatergic_neurons/Cell_type-Glutamatergic_neurons_gseGO_res_filtered.rds' # enrichment file to load
+significance_threshold <- 0.1
 res_folder <- 'Panel_c'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
 
-# loading the results
-gse_res <- readRDS(gse_results_file)
+# loading the enrichment results
+enr_res <- readRDS(enr_res_file)
 
-# selecting the GOs 
-ids <- which(gse_res@result$ID %in% go_ids)
+# focusing on up regulated, significant pathways for plotting
+gse_res_up <- enr_res
+gse_res_up@result <- gse_res_up@result[gse_res_up@result$NES > 0, ]
+gse_res_up@result <- gse_res_up@result[gse_res_up@result$p.adjust <= significance_threshold, ]
 
-# gsea plot
-p <- gseaplot2(gse_res, geneSetID = ids, base_size = 30, rel_heights = c(2, 0.5, 1))
+# dotplot
+p <- dotplot(gse_res_up)
 png(filename = file.path(res_folder, 'Panel_c.png'),
-    width = 5200, height = 3000, res = 300)
-p
+    width = 2100, height = 3000, res = 300)
+plot(p)
 dev.off()
-  
