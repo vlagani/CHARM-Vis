@@ -52,11 +52,11 @@ if(!require(enrichplot)){
   library(enrichplot)
 }
 if(!require(clusterProfiler)){
-  pak('clusterProfiler', ask = FALSE)
+  BiocManager::install('clusterProfiler', ask = FALSE, update = FALSE)
   library(clusterProfiler)
 }
 if(!require(enrichplot)){
-  pak('enrichplot', ask = FALSE)
+  BiocManager::install('enrichplot', ask = FALSE, update = FALSE)
   library(enrichplot)
 }
 if(!require(org.Mm.eg.db)){
