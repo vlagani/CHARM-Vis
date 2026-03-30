@@ -55,10 +55,6 @@ if(!require(clusterProfiler)){
   BiocManager::install('clusterProfiler', ask = FALSE, update = FALSE)
   library(clusterProfiler)
 }
-if(!require(enrichplot)){
-  BiocManager::install('enrichplot', ask = FALSE, update = FALSE)
-  library(enrichplot)
-}
 if(!require(org.Mm.eg.db)){
   BiocManager::install('org.Mm.eg.db', ask = FALSE, update = FALSE)
   library(org.Mm.eg.db)
