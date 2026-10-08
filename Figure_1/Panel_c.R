@@ -55,6 +55,10 @@ tmp$Clusters <- NULL
 rownames(tmp) <- Clusters
 tmp <- t(tmp)
 
+# renaming ENSGALG00010011199 to LRRIQ1
+rownames(tmp)[rownames(tmp) == 'ENSGALG00010011199'] <- 'LRRIQ1'
+markers$ependymal <- 'LRRIQ1'
+
 # building the meta data
 meta_data <- data.frame(Clusters = colnames(tmp))
 rownames(meta_data) <- meta_data$Clusters

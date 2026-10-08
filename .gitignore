@@ -1,0 +1,31 @@
+# Seurat object, to be downloaded from GEO (GSE299793)
+data/combined_sets.rds
+
+# results of the analysis scripts: only the original result tables and
+# objects used by the figure scripts are tracked
+1_differential_analysis/*/*
+!1_differential_analysis/*/*_results.csv
+!1_differential_analysis/*/num_cells_per_sample.txt
+2_enrichment_analysis/*/*
+!2_enrichment_analysis/*/*_gseGO_res.rds
+!2_enrichment_analysis/*/*_gseGO_res_filtered.rds
+!2_enrichment_analysis/*/*_gseGO_res_df.csv
+!2_enrichment_analysis/*/*_gseGO_res_filtered_df.csv
+
+# figure outputs (the Panel_*.R scripts are kept)
+Figure_*/Panel_*/
+
+# renv project library and cache
+renv/library/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
+renv/staging/
+
+# R and OS files
+.Rhistory
+.RData
+.Rproj.user/
+.DS_Store

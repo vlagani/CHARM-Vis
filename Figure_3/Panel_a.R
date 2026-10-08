@@ -1,14 +1,25 @@
 
 #### Script for creating Figure 3 a ####
 
+# Figure 3a has its own package environment (renv_panel_a/renv.lock):
+# it needs simplifyEnrichment 1.14.1, which is not compatible with the
+# packages of the main environment (see README.md)
+Sys.setenv(RENV_PROJECT = normalizePath('renv_panel_a'))
+source('renv_panel_a/renv/activate.R')
+
 # memory and library
 rm(list = ls())
-source('../ancillary/libraries.R')
+suppressPackageStartupMessages({
+  library(simplifyEnrichment)
+  library(ComplexHeatmap)
+  library(circlize)
+})
 source('../ancillary/simplifyGOFromMultipleLists.R')
 
-# control panel 
+# control panel
 enr_folder <- '../2_enrichment_analysis'
 minClusterSize <- 20
+seed <- 12345 # the colors of the keywords are chosen at random
 res_folder <- 'Panel_a'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
 
@@ -41,11 +52,12 @@ names(enr_res) <- gsub('PC', '(PC)', names(enr_res))
 
 # selecting the up regulated
 up_regulated <- lapply(enr_res, function(x){
-  tmp <- as.data.frame(x)
+  tmp <- x@result # same as as.data.frame(x), without loading clusterProfiler
   tmp <- tmp[tmp$NES > 0, ]
 })
 
 # simplify enrichment
+set.seed(seed)
 png(filename = file.path(res_folder, 'Panel_a.png'), 
     width = 4200, height = 2100, res = 300)
 cell_type_up_res <- simplifyGOFromMultipleLists(lt = up_regulated, 

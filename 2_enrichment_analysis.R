@@ -12,6 +12,7 @@ min_num_cells <- 50
 min_num_genes <- 20
 max_num_genes <- 200
 significance_threshold <- 0.1
+seed <- 12345
 ncores <- 8
 res_folder <- '2_enrichment_analysis'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
@@ -20,6 +21,9 @@ dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
 registerDoFuture()
 plan("multisession", workers = ncores)
 options(future.globals.maxSize = 20000 * 1024^2)
+# each iteration sets its own seed before GSEA, so results do not depend on
+# how iterations are distributed over workers
+options(doFuture.rng.onMisuse = 'ignore')
 
 # how many differential analyses?
 analyses <- dir(de_folder)
@@ -29,12 +33,16 @@ n_analyses <- length(analyses)
 source(file.path('ancillary', 'gene_conversion_function.R'))
 load(file.path('data', 'annot_table_mouse_chicken_2024_02_09.RData'))
 
+# GO BP gene sets used in the original analysis (org.Mm.eg.db and GO.db 3.21.0),
+# so that results do not depend on the installed GO annotation version
+go_gene_sets <- readRDS(file.path('data', 'GO_BP_gene_sets_mouse_ensembl_GO_3.21.rds'))
+
 #### enrichment analysis ####
 
 # iterating over analyses
-sinking <- foreach(iter = 1:n_analyses, .packages = c('clusterProfiler', 
-                                           'enrichplot', 
-                                           'org.Gg.eg.db')) %dopar% {
+sinking <- foreach(iter = 1:n_analyses, .packages = c('clusterProfiler',
+                                           'enrichplot',
+                                           'org.Mm.eg.db')) %dopar% {
 
   # specific analysis
   analysis <- analyses[iter]
@@ -74,12 +82,19 @@ sinking <- foreach(iter = 1:n_analyses, .packages = c('clusterProfiler',
   geneList <- tmp$stat
   names(geneList) <- tmp$ensembl
   geneList <- sort(geneList, decreasing = TRUE)
-  
-  # # enrichment analysis
-  gse_res <- gseGO(geneList = geneList, ont = 'BP', pvalueCutoff = 1,
-                   OrgDb = org.Mm.eg.db, keyType = 'ENSEMBL',
-                   minGSSize = min_num_genes, maxGSSize = max_num_genes)
-  
+  geneList <- geneList[names(geneList) != '']
+
+  # enrichment analysis (same as gseGO with ont = 'BP', OrgDb = org.Mm.eg.db and
+  # keyType = 'ENSEMBL', using the gene sets of the original analysis)
+  set.seed(seed)
+  gse_res <- GSEA(geneList = geneList, pvalueCutoff = 1,
+                  TERM2GENE = go_gene_sets$TERM2GENE,
+                  TERM2NAME = go_gene_sets$TERM2NAME,
+                  minGSSize = min_num_genes, maxGSSize = max_num_genes)
+  gse_res@setType <- 'BP'
+  gse_res@organism <- 'Mus musculus'
+  gse_res@keytype <- 'ENSEMBL'
+
   # readable for plots
   gse_res <- setReadable(gse_res, 'org.Mm.eg.db', 'ENSEMBL')
   
