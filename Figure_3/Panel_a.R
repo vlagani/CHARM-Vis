@@ -15,6 +15,7 @@ suppressPackageStartupMessages({
   library(circlize)
 })
 source('../ancillary/simplifyGOFromMultipleLists.R')
+source('../ancillary/figure_settings.R')
 
 # control panel
 enr_folder <- '../2_enrichment_analysis'
@@ -22,6 +23,8 @@ minClusterSize <- 20
 seed <- 12345 # the colors of the keywords are chosen at random
 res_folder <- 'Panel_a'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
+panel_width <- full_width # mm
+panel_height <- 90 # mm
 
 #### cell subtypes ####
 
@@ -56,13 +59,26 @@ up_regulated <- lapply(enr_res, function(x){
   tmp <- tmp[tmp$NES > 0, ]
 })
 
-# simplify enrichment
-set.seed(seed)
-png(filename = file.path(res_folder, 'Panel_a.png'), 
-    width = 4200, height = 2100, res = 300)
-cell_type_up_res <- simplifyGOFromMultipleLists(lt = up_regulated, 
-                                                method = "dynamicTreeCut", 
-                                                control = list(minClusterSize = minClusterSize))
-dev.off()
+# font sizes of the heatmaps
+ht_opt(legend_title_gp = gpar(fontsize = font_text, fontface = 'bold'), 
+       legend_labels_gp = gpar(fontsize = font_text), 
+       heatmap_column_names_gp = gpar(fontsize = font_text))
+
+# simplify enrichment (the seed is set before each drawing, so that the pdf and
+# png files have the same colors)
+draw_panel <- function(){
+  set.seed(seed)
+  simplifyGOFromMultipleLists(lt = up_regulated, 
+                              method = "dynamicTreeCut", 
+                              control = list(minClusterSize = minClusterSize), 
+                              column_title = character(0), 
+                              show_bar_labels = FALSE, 
+                              fontsize_label = font_text, 
+                              fontsize_axis = font_small, 
+                              column_width = unit(2.5, 'mm'), 
+                              fontsize_range = c(font_small, 8), 
+                              word_cloud_grob_param = list(max_width = 45))
+}
+save_panel(file.path(res_folder, 'Panel_a'), draw_panel, panel_width, panel_height)
 
 

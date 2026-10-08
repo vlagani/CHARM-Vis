@@ -4,6 +4,7 @@
 # memory and library
 rm(list = ls())
 source('../ancillary/libraries.R')
+source('../ancillary/figure_settings.R')
 set.seed(12345)
 
 # control panel 
@@ -11,6 +12,8 @@ data_file <- '../data/combined_sets.rds'
 classification_file <- '../data/cell_classification.csv'
 res_folder <- './Panel_d'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
+panel_width <- half_width # mm
+panel_height <- 85 # mm
 
 # loading the plot information
 cluster_annotation <- read.csv(classification_file, stringsAsFactors = FALSE)
@@ -42,18 +45,17 @@ n_idents <- length(idents)
 # palette
 final_palette <- dittoColors()[seq_len(n_idents)]
 names(final_palette) <- idents
-final_palette[names(final_palette) == 'Astrocytes'] <- '#00BA38'
-final_palette[names(final_palette) == 'OPC'] <- '#619CFF'
-final_palette[names(final_palette) == 'Ependymal'] <- '#01BFC4'
-final_palette[names(final_palette) == 'Other'] <- '#F564E3'
+shared <- intersect(names(final_palette), names(cell_type_colors))
+final_palette[shared] <- cell_type_colors[shared]
 final_palette[names(final_palette) == 'EXC GLU-7'] <- '#AD0000'
 
 # umap
-p <- DimPlot(combined_sets, pt.size = 0.1, label.size = 6, repel = TRUE,
-             label = FALSE, alpha = 0.6, cols = final_palette) + NoLegend()
-p <- LabelClusters(p, id = 'ident', fontface = "bold", 
-                   color = "black", repel = TRUE, size = 6)
-png(filename = file.path(res_folder, 'panel_d.png'), 
-    width = 7500, height = 6600, res = 600)
-plot(p)
-dev.off()
+p <- DimPlot(combined_sets, pt.size = 3, label = FALSE, alpha = 0.6, 
+             cols = final_palette, raster = TRUE, 
+             raster.dpi = round(600 * c(panel_width, panel_height) / 25.4)) + 
+  theme_figure() + NoAxes() + NoLegend()
+p <- LabelClusters(p, id = 'ident', fontface = 'bold', color = 'black', 
+                   repel = TRUE, size = font_text / ggplot2::.pt, 
+                   family = font_family)
+save_panel(file.path(res_folder, 'panel_d'), function() plot(p), 
+           panel_width, panel_height)

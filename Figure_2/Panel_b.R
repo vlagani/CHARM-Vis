@@ -4,6 +4,7 @@
 # memory and library
 rm(list = ls())
 source('../ancillary/libraries.R')
+source('../ancillary/figure_settings.R')
 
 # control panel 
 fc_threshold <- 1
@@ -14,19 +15,14 @@ pheno_file <- '../data/phenoData.csv'
 de_folder <- '../1_differential_analysis'
 res_folder <- './Panel_b'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
+panel_width <- half_width # mm
+panel_height <- 80 # mm
 
 # choosing the analysis
 cell_type_list <- list(`Cell_type-Gabaergic_neurons` = c(26, 22, 34, 27, 15, 28, 14, 31, 19, 29), 
                        `Cell_type-Glutamatergic_neurons` = c(0:5, 7:10, 12, 13, 16:18, 21, 24, 30, 33),
                        `Cell_subtype-Astrocytes` = c(6, 11), 
                        `Cell_subtype-Oligodendrocytes_PC` = c(20, 25)
-)
-
-# colors!
-cell_type_colors <- c(`Gabaergic neurons` = '#B79F00', 
-                      `Glutamatergic neurons` = '#F8766D',
-                      Astrocytes = '#00BA38', 
-                      OPC = '#619CFF'
 )
 
 # loading the DE results
@@ -116,27 +112,34 @@ write.csv(tmp, row.names = FALSE,
 to_plot$num_lncRNA_label <- to_plot$num_lncRNA
 to_plot$num_lncRNA_label[1] <- ''
 
-# plotting!
+# plotting! (the alpha scale only creates the legend: the total bars are
+# drawn again fully transparent, the lncRNA bars are shadowed)
 p <- ggplot(data = to_plot, 
             mapping = aes(x = reorder(cell_type, -num_total), 
                           y = num_total, fill = cell_type)) + 
-  geom_col() + 
+  geom_col(show.legend = FALSE) + 
+  geom_col(mapping = aes(alpha = 'transcripts'), fill = 'black') + 
   geom_text(mapping = aes(x = reorder(cell_type, -num_total), 
                           y = num_total, label = num_total), 
-            color = 'grey25', size = 3.5, nudge_y = 7) + 
-  scale_x_discrete(name = NULL) + 
-  scale_y_continuous(name = 'Number of differentially expressed genes') + 
-  scale_fill_manual(name = NULL, values = cell_type_colors) + 
-  theme_bw() + 
-  theme(legend.position = 'none') +
+            color = 'grey25', size = font_text / .pt, nudge_y = 7) + 
   geom_col(mapping = aes(x = reorder(cell_type, -num_total), 
-                         y = num_lncRNA), 
-           fill = 'black', alpha = 0.5) + 
+                         y = num_lncRNA, alpha = 'lncRNA'), 
+           fill = 'black') + 
   geom_text(mapping = aes(x = reorder(cell_type, -num_total), 
                           y = num_lncRNA, label = num_lncRNA_label), 
-            color = 'grey25', size = 3.5, nudge_y = 7)
-
-png(filename = file.path(res_folder, 'number_DE_genes_by_cell_type.png'), 
-    width = 3600, height = 2100, res = 600)
-plot(p)
-dev.off()
+            color = 'grey25', size = font_text / .pt, nudge_y = 7) + 
+  scale_x_discrete(name = NULL, labels = function(x) sub(' ', '\n', x)) + 
+  scale_y_continuous(name = 'Number of differentially expressed genes') + 
+  scale_fill_manual(values = cell_type_colors, guide = 'none') + 
+  scale_alpha_manual(name = NULL, values = c(transcripts = 0, lncRNA = 0.5), 
+                     breaks = c('transcripts', 'lncRNA'), 
+                     labels = c('Total number of differentially expressed transcripts', 
+                                'Total number of differentially expressed lncRNAs')) + 
+  theme_bw(base_size = font_text) + theme_figure() + 
+  theme(legend.position = 'bottom', 
+        legend.direction = 'vertical', 
+        legend.key.size = unit(3, 'mm'), 
+        legend.margin = margin(0, 0, 0, 0)) + 
+  guides(alpha = guide_legend(override.aes = list(colour = 'grey40', linewidth = 0.2)))
+save_panel(file.path(res_folder, 'number_DE_genes_by_cell_type'), 
+           function() plot(p), panel_width, panel_height)

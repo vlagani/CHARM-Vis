@@ -4,12 +4,15 @@
 # memory and library
 rm(list = ls())
 source('../ancillary/libraries.R')
+source('../ancillary/figure_settings.R')
 
 # control panel 
 data_file <- '../data/combined_sets.rds'
 res_folder <- './Panel_b'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
-universe <- list(Oligodendrocytes = c(20, 25),
+panel_width <- half_width # mm
+panel_height <- 80 # mm
+universe <- list(OPC = c(20, 25),
                  Astrocytes = c(6, 11),
                  Ependymal = 23,
                  Other = c(32, 35),
@@ -29,10 +32,17 @@ for(i in 1:length(universe)){
 
 # umap
 DefaultAssay(combined_sets) <- 'integrated'
+combined_sets$`Cell identity` <- factor(combined_sets$`Cell identity`, 
+                                        levels = names(cell_type_colors))
 Idents(combined_sets) <- 'Cell identity'
-p <- DimPlot(combined_sets, pt.size = 0.1, 
-             label = FALSE, alpha = 0.9)
-png(filename = file.path(res_folder, 'panel_b.png'), 
-    width = 7500, height = 6600, res = 600)
-plot(p)
-dev.off()
+p <- DimPlot(combined_sets, pt.size = 3, label = FALSE, alpha = 0.9, 
+             cols = cell_type_colors, raster = TRUE, 
+             raster.dpi = round(600 * c(panel_width, panel_height) / 25.4)) + 
+  theme_figure() + NoAxes() + 
+  theme(legend.position = 'bottom', 
+        legend.key.size = unit(3, 'mm'), 
+        legend.key.spacing.y = unit(0.5, 'mm'),
+        legend.margin = margin(0, 0, 0, 0)) + 
+  guides(color = guide_legend(nrow = 2, override.aes = list(size = 1.5)))
+save_panel(file.path(res_folder, 'panel_b'), function() plot(p), 
+           panel_width, panel_height)

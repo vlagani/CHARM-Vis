@@ -15,7 +15,7 @@ The repository includes the results of the differential expression and enrichmen
 | `1_differential_analysis/` | Results of `1_differential_analysis.R` used in the manuscript |
 | `2_enrichment_analysis.R` | Gene set enrichment analysis (GSEA) on GO biological processes |
 | `2_enrichment_analysis/` | Results of `2_enrichment_analysis.R` used in the manuscript |
-| `Figure_1/`, `Figure_2/`, `Figure_3/` | One script per figure panel |
+| `Figure_1/`, `Figure_2/`, `Figure_3/` | One script per figure panel; panels are written as PDF and PNG (600 dpi) at their final size |
 | `Figure_4/` | `Figure_4.R`, producing all panels of Figure 4 |
 | `Figure_5/` | `Panel_f.R`, producing Figure 5f (in situ hybridization, IMM) and the same analysis for NeoS |
 | `ancillary/` | Functions and package loading shared by the scripts |
@@ -35,7 +35,7 @@ The repository includes the results of the differential expression and enrichmen
    cd Figure_1
    Rscript Panel_b.R
    ```
-   Each script writes its panel in a subfolder with the same name (e.g. `Figure_1/Panel_b/`). `Figure_4/Figure_4.R` analyses all genes, sides and brain regions and writes plots and statistics in `Figure_4/Results/<gene>/<side>_<region>/`; the panels of Figure 4 are listed at the top of the script. `Figure_5/Panel_f.R` writes the dotplot, the plotted values and the mixed model results (`results.txt`) for IMM (Figure 5f) and NeoS in `Figure_5/Panel_f/<area>/`.
+   Each script writes its panel in a subfolder with the same name (e.g. `Figure_1/Panel_b/`). `Figure_4/Figure_4.R` analyses all genes, sides and brain regions and writes plots and statistics in `Figure_4/Results/<gene>/<side>_<region>/`, and the panels of Figure 4 in `Figure_4/Panel_a/` to `Figure_4/Panel_g/` (listed at the top of the script). `Figure_5/Panel_f.R` writes the dotplot, the plotted values and the mixed model results (`results.txt`) for IMM (Figure 5f) and NeoS in `Figure_5/Panel_f/<area>/`.
 5. Optionally, re-run the analyses from the repository root with `Rscript 1_differential_analysis.R` and `Rscript 2_enrichment_analysis.R`. This overwrites the results in `1_differential_analysis/` and `2_enrichment_analysis/` (see the notes below on what to expect).
 
 ## Reproducibility

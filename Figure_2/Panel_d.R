@@ -4,6 +4,7 @@
 # memory and library
 rm(list = ls())
 source('../ancillary/libraries.R')
+source('../ancillary/figure_settings.R')
 
 # control panel 
 fc_threshold <- 1
@@ -14,6 +15,8 @@ min_num_cells <- 50
 de_folder <- '../1_differential_analysis'
 res_folder <- './Panel_d'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
+panel_width <- half_width # mm
+panel_height <- 90 # mm
 
 # choosing the analysis
 de_res_names <- c('Cell_type-Glutamatergic_neurons', 
@@ -92,10 +95,14 @@ p <- Heatmap(to_plot, name = "log2(FC)", border = TRUE,
              col = colorRamp2(c(0, max(max(to_plot))), c("white", "red")), 
              cluster_rows = FALSE, cluster_columns = FALSE,
              column_names_rot = 50, row_names_side = "left",
-             heatmap_legend_param = list(direction = 'vertical')) 
-
-png(filename = file.path(res_folder, 'panel_d.png'), 
-    width = 3000, height = 3600, res = 600)
-plot(p)
-dev.off()
+             row_names_gp = gpar(fontsize = font_text), 
+             column_names_gp = gpar(fontsize = font_text), 
+             width = unit(ncol(to_plot) * 3.5, 'mm'), 
+             heatmap_legend_param = list(direction = 'vertical', 
+                                         title_gp = gpar(fontsize = font_text, fontface = 'bold'), 
+                                         labels_gp = gpar(fontsize = font_text), 
+                                         legend_height = unit(15, 'mm'), 
+                                         grid_width = unit(2, 'mm'))) 
+save_panel(file.path(res_folder, 'panel_d'), function() draw(p), 
+           panel_width, panel_height)
 

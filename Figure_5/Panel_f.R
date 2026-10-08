@@ -10,10 +10,13 @@ rm(list = ls())
 library(tidyverse)
 library(nlme)
 library(emmeans)
+source('../ancillary/figure_settings.R')
 areas <- c('IMM', 'NeoS')
 
 # results folder
 res_folder <- 'Panel_f'
+panel_width <- 58 # mm, three panels per row
+panel_height <- 45 # mm
 
 # reading the data (one value per cell)
 dataset <- readRDS('../data/figure_5/totals.rds')
@@ -71,14 +74,13 @@ to_plot <- current_dataset %>% filter(area == current_area) %>%
 
 p <- ggplot(data = to_plot,
             mapping = aes(x = group, y = value, color = group)) +
-  geom_point(size = 4) +
+  geom_point(size = 1.5) +
   scale_x_discrete(name = 'Group', labels = c('Good learners', 'Poor learners', 'Untrained')) +
   scale_y_continuous(name = 'Normalized GLUBK89 Signal') +
-  theme_bw()
-png(filename = file.path(current_res_folder, 'dotplot_group.png'),
-    width = 1800, height = 1400, res = 300)
-plot(p)
-dev.off()
+  theme_bw(base_size = font_text) + theme_figure() +
+  theme(legend.position = 'none') # the colors repeat the groups on the x axis
+save_panel(file.path(current_res_folder, 'dotplot_group'), function() plot(p),
+           panel_width, panel_height)
 
 # writing the data of the plot
 write.csv(to_plot, row.names = FALSE, file.path(current_res_folder, 'dotplot_values.csv'))
@@ -122,14 +124,13 @@ to_plot <- current_dataset %>% filter(area == current_area) %>%
 
 p <- ggplot(data = to_plot,
             mapping = aes(x = group, y = value, color = group)) +
-  geom_point(size = 4) +
+  geom_point(size = 1.5) +
   scale_x_discrete(name = 'Group', labels = c('Good learners', 'Poor learners', 'Untrained')) +
   scale_y_continuous(name = 'Normalized GLUBK89 Signal') +
-  theme_bw()
-png(filename = file.path(current_res_folder, 'dotplot_group.png'),
-    width = 1800, height = 1400, res = 300)
-plot(p)
-dev.off()
+  theme_bw(base_size = font_text) + theme_figure() +
+  theme(legend.position = 'none') # the colors repeat the groups on the x axis
+save_panel(file.path(current_res_folder, 'dotplot_group'), function() plot(p),
+           panel_width, panel_height)
 
 # writing the data of the plot
 write.csv(to_plot, row.names = FALSE, file.path(current_res_folder, 'dotplot_values.csv'))

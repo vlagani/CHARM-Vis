@@ -1,10 +1,15 @@
 # modified version from simplifyEnrichment
 # Secondary heatmap colorscale modified to blue shades from green and red scale
+# Added arguments: show_bar_labels (names below the barplots), fontsize_label and
+# fontsize_axis (text of the barplots), column_width (width of each column of the
+# left heatmap)
 simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = NULL, padj_cutoff = 0.01, 
           filter = function(x) any(x < padj_cutoff), default = 1, ont = NULL, 
           db = "org.Hs.eg.db", measure = "Rel", heatmap_param = list(NULL), 
           show_barplot = TRUE, method = "binary_cut", control = list(), 
-          min_term = NULL, verbose = TRUE, column_title = NULL, ...) 
+          min_term = NULL, verbose = TRUE, column_title = NULL, 
+          show_bar_labels = TRUE, fontsize_label = 10, fontsize_axis = NULL, 
+          column_width = unit(0.5, "cm"), ...) 
 {
   n = length(lt)
   if (is.data.frame(lt[[1]])) {
@@ -57,7 +62,8 @@ simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = 
                                        measure = measure, heatmap_param = heatmap_param, 
                                        show_barplot = show_barplot, method = method, control = control, 
                                        min_term = min_term, verbose = verbose, column_title = column_title, 
-                                       ...))
+                                       show_bar_labels = show_bar_labels, fontsize_label = fontsize_label, 
+                                       fontsize_axis = fontsize_axis, column_width = column_width, ...))
   }
   else if (is.character(lt[[1]])) {
     lt = lapply(lt, function(x) structure(rep(1, length(x)), 
@@ -164,11 +170,11 @@ simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = 
         NULL
         else name, show_row_names = FALSE, cluster_columns = FALSE, 
         border = "black", heatmap_legend_param = heatmap_legend_param, 
-        width = unit(0.5, "cm") * n, use_raster = TRUE, 
+        width = column_width * n, use_raster = TRUE, 
         left_annotation = rowAnnotation(empty = anno_block(width = unit(1.2, 
                                                                         "cm"), panel_fun = function(index) grid.text(GetoptLong::qq("Number of significant GO terms in each cluster (padj < @{padj_cutoff})"), 
                                                                                                                      unit(0, "npc"), 0.5, just = "top", rot = 90, 
-                                                                                                                     gp = gpar(fontsize = 10))), bar = anno_link(align_to = align_to, 
+                                                                                                                     gp = gpar(fontsize = fontsize_label))), bar = anno_link(align_to = align_to, 
                                                                                                                                                                  side = "left", gap = unit(3, "mm"), link_gp = gpar(fill = "#DDDDDD", 
                                                                                                                                                                                                                     col = "#AAAAAA"), internal_line = FALSE, 
                                                                                                                                                                  panel_fun = function(index) {
@@ -187,7 +193,7 @@ simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = 
                                                                                                                                                                              gp = gpar(fill = "#444444", col = "#444444"))
                                                                                                                                                                    if (length(index)/nrow(mm) > 0.05) {
                                                                                                                                                                      grid.yaxis(at = seq(0, max(v), by = by), 
-                                                                                                                                                                                gp = gpar(col = "#444444", cex = 0.6))
+                                                                                                                                                                                gp = if (is.null(fontsize_axis)) gpar(col = "#444444", cex = 0.6) else gpar(col = "#444444", fontsize = fontsize_axis))
                                                                                                                                                                    }
                                                                                                                                                                    popViewport()
                                                                                                                                                                    popViewport()
@@ -195,7 +201,7 @@ simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = 
                                                                                                                                                                                                              "mm") * (length(align_to) - 1) - unit(2, 
                                                                                                                                                                                                                                                    "mm") * length(align_to)) + unit(2, "mm"))), 
         post_fun = function(ht) {
-          decorate_annotation("bar", {
+          if (show_bar_labels) decorate_annotation("bar", {
             nc = ncol(mm)
             grid.text(colnames(mm), (seq_len(nc) - 0.5)/nc * 
                         (unit(1, "npc") - unit(5, "mm")), y = -ht_opt$COLUMN_ANNO_PADDING, 
@@ -210,7 +216,7 @@ simplifyGOFromMultipleLists <- function (lt, go_id_column = NULL, padj_column = 
       NULL
       else name, show_row_names = FALSE, cluster_columns = FALSE, 
       border = "black", heatmap_legend_param = heatmap_legend_param, 
-      width = unit(0.5, "cm") * n, use_raster = TRUE)
+      width = column_width * n, use_raster = TRUE)
   }
   if (is.null(min_term)) 
     min_term = round(nrow(sim_mat) * 0.02)

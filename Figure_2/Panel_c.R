@@ -4,6 +4,7 @@
 # memory and library
 rm(list = ls())
 source('../ancillary/libraries.R')
+source('../ancillary/figure_settings.R')
 
 # control panel 
 fc_threshold <- 1
@@ -17,6 +18,8 @@ classification_file <- '../data/cell_classification.csv'
 de_folder <- '../1_differential_analysis'
 res_folder <- './Panel_c'
 dir.create(res_folder, showWarnings = FALSE, recursive = TRUE)
+panel_width <- half_width # mm
+panel_height <- 90 # mm
 
 
 # loading classification
@@ -25,17 +28,6 @@ classification <- read.csv(classification_file)
 # choosing the analysis
 cell_types <- unique(classification$Cell_type)
 cell_subtypes <- unique(classification$Cell_subtype)
-
-# colors!
-cell_types_color <- c(Astrocytes = '#00BA38',
-                      `Gabaergic neurons` = '#B79F00',
-                      `Glutamatergic neurons` = '#F8766D',
-                      OPC = '#619CFF',
-                      Ependymal = '#01BFC4',
-                      Other = '#F564E3',
-                      `Cell types` = 'white'
-                      #XXX , IMM = 'grey'
-)
 
 #### cell subtype ####
 
@@ -136,7 +128,8 @@ rownames(symmetric_corr_m) <- colnames(symmetric_corr_m) <-
 column_ha = HeatmapAnnotation(`Cell type` = splitting_vector, 
                               show_annotation_name = FALSE, 
                               show_legend = FALSE, 
-                              col = list(`Cell type` = cell_types_color))
+                              col = list(`Cell type` = cell_type_colors), 
+                              simple_anno_size = unit(2, 'mm'))
 
 # which matrix to plot?
 to_plot <- symmetric_corr_m # corr_m
@@ -153,11 +146,28 @@ p <- Heatmap(to_plot, name = "Correlation",
              show_row_dend = FALSE,
              clustering_distance_rows = 'spearman',
              clustering_distance_columns = 'spearman', 
-             column_dend_height = unit(3, "cm"),
-             heatmap_legend_param = list(direction = 'horizontal')
+             column_dend_height = unit(10, 'mm'),
+             row_names_gp = gpar(fontsize = font_text),
+             heatmap_legend_param = list(direction = 'horizontal', 
+                                         at = c(0, 0.5, 1), 
+                                         title_gp = gpar(fontsize = font_text, fontface = 'bold'), 
+                                         labels_gp = gpar(fontsize = font_text), 
+                                         legend_width = unit(15, 'mm'), 
+                                         grid_height = unit(2, 'mm'))
 )
-png(filename = file.path(res_folder, 'logFC_correlation_between_cell_subtypes.png'), 
-    width = 6000, height = 5700, res = 600)
-plot(p)
-dev.off()
+
+# legend of the cell types, as in Figure 1b (only the cell types shown here)
+legend_colors <- cell_type_colors[names(cell_type_colors) %in% splitting_vector]
+cell_type_legend <- Legend(labels = names(legend_colors), type = 'points', 
+                           pch = 16, size = unit(2.15, 'mm'), 
+                           legend_gp = gpar(col = legend_colors), 
+                           background = NA, nrow = 2, 
+                           labels_gp = gpar(fontsize = font_text), 
+                           grid_height = unit(3, 'mm'), grid_width = unit(3, 'mm'))
+save_panel(file.path(res_folder, 'logFC_correlation_between_cell_subtypes'), 
+           function() draw(p, annotation_legend_list = list(cell_type_legend), 
+                           heatmap_legend_side = 'bottom', 
+                           annotation_legend_side = 'bottom', 
+                           merge_legend = TRUE), 
+           panel_width, panel_height)
 

@@ -18,6 +18,7 @@
 # set up
 rm(list = ls())
 source('../ancillary/StatPlot.R')
+source('../ancillary/figure_settings.R')
 library(readxl)
 
 # control panel
@@ -27,11 +28,27 @@ regions <- c('IMM', 'PN')
 folders <- dir(data_folder)
 root_res_folder <- 'Results'
 
+# panels of Figure 4: (a | b) / (c | d | e) / (f | g), sizes in mm; all panels use
+# the same base font size, so that the text has the same size in all of them;
+# the region PN is labelled PPN in the figure
+figure_panels <- data.frame(panel = c('a', 'b', 'c', 'd', 'e', 'f', 'g'),
+                            gene = c('RORA', 'ROBO1', 'LUC7L', 'FOXP2', 'FOXP2', 
+                                     'GLUBK89', 'ENSGALG00010026609'),
+                            side = 'L',
+                            region = c('IMM', 'IMM', 'IMM', 'IMM', 'PN', 'IMM', 'IMM'),
+                            width = c(half_width, half_width, 58, 58, 58, half_width, half_width),
+                            height = c(78, 78, 58, 58, 58, 78, 78))
+figure_pointsize <- 4.2 # largest text of StatPlot (cex = 2) at about 7 pt
+figure_lwd_scale <- 0.4 # thinner lines than StatPlot's default (lwd = 2)
+
 # full dataset
 full_data_cols <- c('Name', 'TrUntr', 'Region', 'Side',
                     'Preference Score', 'Standardized Relative Value')
 full_data <- data.frame(matrix(NA, 0, length(full_data_cols)))
 colnames(full_data) <- full_data_cols
+
+# inputs of the plots, for the panels of Figure 4
+plot_inputs <- list()
 
 # looping over folders
 for(f in 1:length(folders)){
@@ -107,6 +124,13 @@ for(f in 1:length(folders)){
       colnames(tmp) <- full_data_cols
       full_data <- rbind(full_data, tmp)
 
+      # inputs of the plot
+      plot_inputs[[paste(folders[f], s, r)]] <- 
+        list(dataset = dataset, 
+             mainheading = paste(ifelse(s == 'L', 'Left', 'Right'), r), 
+             ylabel = folders[f], responseno = dim(dataset)[2], 
+             ylow = yLow, yhigh = yHigh, xlow = xLow, xhigh = xHigh)
+      
       # analysis
       res <- tryCatch({
         png(filename = file.path(resFolder, 'figure.png'),
@@ -144,3 +168,18 @@ for(f in 1:length(folders)){
 # writing the full data
 write.csv(full_data, row.names = FALSE,
           file = file.path(root_res_folder, 'full_data.csv'))
+
+#### panels of Figure 4 ####
+
+for(i in 1:nrow(figure_panels)){
+  x <- figure_panels[i, ]
+  inputs <- plot_inputs[[paste(x$gene, x$side, x$region)]]
+  panel_folder <- paste0('Panel_', x$panel)
+  dir.create(panel_folder, showWarnings = FALSE, recursive = TRUE)
+  save_panel(file.path(panel_folder, paste0('panel_', x$panel)), 
+             function() StatPlot(inputs$dataset, sub('PN$', 'PPN', inputs$mainheading), inputs$ylabel, 
+                                 inputs$responseno, inputs$ylow, inputs$yhigh, 
+                                 inputs$xlow, inputs$xhigh, 
+                                 lwd_scale = figure_lwd_scale), 
+             x$width, x$height, pointsize = figure_pointsize)
+}

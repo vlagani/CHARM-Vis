@@ -1,4 +1,4 @@
-StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhigh) {
+StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhigh,lwd_scale=1) {
   
   ########################## StatPlot ###############################
   #
@@ -35,6 +35,8 @@ StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhi
   # yhigh: upper bound of y-axis (ditto)
   # xlow: lowest x coordinate to be plotted
   # xhigh: highest x coordinate to be plotted
+  # lwd_scale: factor applied to all line widths (added for the figures of
+  #   CHARM-Vis; default 1)
   #
   # Example console command to analyse the accompanying dataframe LeftIMMTest:
   # StatPlot1(LeftIMMTest,"Left IMM","M-CPEB-3",17,0.6,1.6,50,100)
@@ -119,11 +121,11 @@ StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhi
   plot(Tr$Pref, Tr$Corrected, main=mainheading, ylim=c(ylow,yhigh), xlim=c(xlow,xhigh), frame.plot=FALSE, # Plot response against preference score
        xlab="Preference score", ylab="", xaxt = "n", yaxt="n", pch=16, cex=1.8,
        mgp=c(2,1,-0.71), cex.lab=1.8, cex.main=2)
-  axis(side=1,lwd=2, pos=ylow)
+  axis(side=1,lwd=2*lwd_scale, pos=ylow)
   clip(lowxforint, highxforint, ylow, yhigh)
-  abline(a=Int, b=slope, xpd=F, lwd=2)        # Fit regression line 
-  arrows(50,ylow,50,Int50,length=0,angle=0,code=2,lty=2,lwd=2)                 # Dashed line to y = In50
-  arrows(MaxPref,ylow,MaxPref,IntMaxPref,length=0,angle=0,code=2,lty=2,lwd=2)  # Dashed line to y = IntMaxPref
+  abline(a=Int, b=slope, xpd=F, lwd=2*lwd_scale)        # Fit regression line 
+  arrows(50,ylow,50,Int50,length=0,angle=0,code=2,lty=2,lwd=2*lwd_scale)                 # Dashed line to y = In50
+  arrows(MaxPref,ylow,MaxPref,IntMaxPref,length=0,angle=0,code=2,lty=2,lwd=2*lwd_scale)  # Dashed line to y = IntMaxPref
   Position <- ylow + (Int50-ylow)/2
   text(70, Position, rtext, cex=2)
     
@@ -149,10 +151,10 @@ StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhi
   par(fig=c(0,1,0,1),new=T)                         # Frame for plot
   
   plot(13, avg, frame.plot=FALSE, ylim=c(ylow,yhigh), xlim=c(0,100), xaxt="n",
-       xlab="", ylab="", cex=2, lwd=2)
-  points(x=xtemp, y=Untr$Corrected, cex=1.5, lwd=2)
-  arrows(13, avg-sem, 13, avg+sem, length=0.075, angle=90, code=3, lwd=2) # Plot +/- SEM
-  axis(side=2,lwd=2)
+       xlab="", ylab="", cex=2, lwd=2*lwd_scale)
+  points(x=xtemp, y=Untr$Corrected, cex=1.5, lwd=2*lwd_scale)
+  arrows(13, avg-sem, 13, avg+sem, length=0.075, angle=90, code=3, lwd=2*lwd_scale) # Plot +/- SEM
+  axis(side=2,lwd=2*lwd_scale)
   title(ylab=ylabel, line=2.7, cex.lab=1.8)
   RelPosn = avg + sem + 0.05
   text(10,yhigh,"Untrained",cex=2)
@@ -162,14 +164,14 @@ StatPlot <- function(dataframe,mainheading,ylabel,responseno,ylow,yhigh,xlow,xhi
   if(MinPref <= 40) {xint <- 43}
   if(MinPref >= 50) {xint <- 24}
   if(MinPref > 40 & MinPref < 50) {xint <- 35}
-  arrows(ylow,Int50,xint,Int50,length=0,angle=0,code=2,lty=2,lwd=2)
-  arrows(ylow,IntMaxPref,MaxPref,IntMaxPref,length=0,angle=0,code=2,lty=2,lwd=2)
+  arrows(ylow,Int50,xint,Int50,length=0,angle=0,code=2,lty=2,lwd=2*lwd_scale)
+  arrows(ylow,IntMaxPref,MaxPref,IntMaxPref,length=0,angle=0,code=2,lty=2,lwd=2*lwd_scale)
   
   # Plot SEs of intercepts
   col1 <- rgb(0.5,0.5,0.5,0.5)                # 50% transparency
   Batch <- Tr$Batch
-  rect(-5,Int50-seInt50,0,Int50+seInt50,col=col1)
-  rect(-5,IntMaxPref-seMaxInt,0,IntMaxPref+seMaxInt,col=col1)
+  rect(-5,Int50-seInt50,0,Int50+seInt50,col=col1,lwd=lwd_scale)
+  rect(-5,IntMaxPref-seMaxInt,0,IntMaxPref+seMaxInt,col=col1,lwd=lwd_scale)
   
   # t-tests comparing intercepts with untrained mean, degrees of freedom adjusted
   # for different variances
