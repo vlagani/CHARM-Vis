@@ -39,7 +39,7 @@ Idents(combined_sets) <- 'Cell identity'
 
 # Number of clusters / identities
 idents <- levels(Idents(combined_sets))
-idents <- sort(idents)
+idents <- stringr::str_sort(idents, locale = 'en') # same order in any system locale
 n_idents <- length(idents)
 
 # palette
